@@ -1,7 +1,7 @@
 import { SET_USER } from '../actions';
 
 const initialState = {
-    user: {}, // username & token
+    user: {},
     loggedIn: false
 }
 

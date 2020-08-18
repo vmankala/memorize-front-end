@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import { loginUser } from '../../actions/auth.actions';
 import PropTypes from 'prop-types';
 
-import PublicNavbar from '../shared/PublicNavbar';
-
 class Login extends Component {
     constructor() {
         super();
@@ -21,6 +19,10 @@ class Login extends Component {
     }
 
     componentWillReceiveProps(next) {
+        if (next.auth.loggedIn) {
+            this.props.history.push('/dashboard')
+        }
+
         if (next.errors) {
             this.setState({ errors: next.errors });
         }
@@ -38,16 +40,15 @@ class Login extends Component {
             password: this.state.password,
         }
 
-        this.props.loginUser(data, this.props.history);
+        this.props.loginUser(data);
     }
 
     render() {
         return (
             <React.Fragment>
-                <PublicNavbar />
-                <br />
-                <h2>Login</h2>
-                <Form noValidate className="w-25 p-3 mx-auto" onSubmit={this.handleSubmit}>
+                <br/> <br/>
+                <h2>Please sign in</h2>
+                <Form noValidate className="w-100 p-3 mx-auto" onSubmit={this.handleSubmit} style={{maxWidth:"350px"}}>
                     <Form.Row>
                         <Form.Group as={Col} controlId="username">
                             <Form.Label>Username</Form.Label>
@@ -86,7 +87,8 @@ class Login extends Component {
                             </InputGroup>
                         </Form.Group>
                     </Form.Row>
-                    <Button type="submit">Login</Button>
+                    <br/>
+                    <Button type="submit" className="btn btn-lg btn-primary btn-block">Login</Button>
                 </Form>
             </React.Fragment>
         );
