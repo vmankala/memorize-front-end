@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { Jumbotron } from 'react-bootstrap'
 
-import PublicNavbar from '../shared/PublicNavbar';
-
 class Landing extends Component {
     render() {
         return (
             <React.Fragment>
-                <PublicNavbar />
                 <Jumbotron>
                     <h1>Welcome to Memorize!</h1>
                     <p className="w-50 p-3 mx-auto">

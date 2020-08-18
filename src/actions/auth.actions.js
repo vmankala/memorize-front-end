@@ -26,14 +26,13 @@ export const registerUser = (formData, history) => (dispatch) => {
 }
 
 
-export const loginUser = (formData, history) => (dispatch) => {
+export const loginUser = (formData) => (dispatch) => {
     axios.post('http://localhost:3000/users/login', formData)
         .then(res => {
             const token = res.data;
             localStorage.setItem('sessionToken', token);
             authenticate(token);
             dispatch(setUser(jwtdecode(token)));
-            history.push('/dashboard');
         })
         .catch(err => dispatch(getErrors(err.response.data)));
 }
