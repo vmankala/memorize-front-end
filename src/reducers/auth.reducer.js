@@ -10,7 +10,7 @@ export default function (state = initialState, action) {
         case SET_USER:
             return {
                 ...state,
-                loggedIn: Object.keys(action.payload).length === 0,
+                loggedIn: Object.keys(action.payload).length !== 0,
                 user: action.payload
             };
         default:

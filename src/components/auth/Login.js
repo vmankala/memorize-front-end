@@ -18,6 +18,12 @@ class Login extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    componentDidMount() {
+        if (this.props.auth.loggedIn) {
+            this.props.history.push('/dashboard')
+        }
+    }
+
     componentWillReceiveProps(next) {
         if (next.auth.loggedIn) {
             this.props.history.push('/dashboard')

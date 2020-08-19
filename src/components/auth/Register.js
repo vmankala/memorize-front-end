@@ -19,11 +19,13 @@ class Register extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillReceiveProps(next) {
-        if (next.auth.loggedIn) {
+    componentDidMount() {
+        if (this.props.auth.loggedIn) {
             this.props.history.push('/dashboard')
         }
+    }
 
+    componentWillReceiveProps(next) {
         if (next.errors) {
             this.setState({ errors: next.errors });
         }
