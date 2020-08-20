@@ -52,7 +52,7 @@ class Register extends Component {
             <React.Fragment>
                 <br/> <br/>
                 <h2>Create new account</h2>
-                <Form noValidate className="w-100 p-3 mx-auto" onSubmit={this.handleSubmit} style={{maxWidth:"350px"}}>
+                <Form noValidate className="w-100 p-3 mx-auto" onSubmit={this.handleSubmit} style={{maxWidth:"350px", textAlign:"left"}}>
                     <Form.Row>
                         <Form.Group as={Col} controlId="username">
                             <Form.Label>Username</Form.Label>
