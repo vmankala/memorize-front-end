@@ -52,7 +52,7 @@ export const createCardset = (formData) => (dispatch) => {
         .catch(err => dispatch(getErrors(err.response.data)));
 }
 
-export const updateCardset = (formData, id) => (dispatch) => {
+export const updateCardset = (id, formData) => (dispatch) => {
     axios.post('http://localhost:3000/cardsets/' + id + '/edit', formData)
         .then(res => {
             dispatch(editCardset(res.data));

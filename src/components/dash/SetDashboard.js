@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Jumbotron, Card, ButtonGroup, Button, Modal, Form, InputGroup, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { getCardsets, deleteCardset, createCardset, updateCardset } from '../../actions/cardset.actions';
+import { getCardset, deleteCard, createCard, updateCard } from '../../actions/card.actions';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-class Dashboard extends Component {
+class SetDashboard extends Component {
     constructor() {
         super();
         this.state = {
@@ -14,8 +14,8 @@ class Dashboard extends Component {
             createModal: false,
             selectedId: '',
             errors: {},
-            title: '',
-            description: ''
+            prompt: '',
+            answer: ''
         }
 
         this.showDelete = this.showDelete.bind(this);
@@ -49,16 +49,16 @@ class Dashboard extends Component {
     }
 
     acceptDelete() {
-        this.props.deleteCardset(this.state.selectedId);
+        this.props.deleteCard(this.props.match.params.setid, this.state.selectedId);
         this.closeDelete();
     }
 
-    showUpdate(id, title, description) {
+    showUpdate(id, prompt, answer) {
         this.setState({
             updateModal: true,
             selectedId: id,
-            title: title,
-            description: description
+            prompt: prompt,
+            answer: answer
         });
     }
 
@@ -74,26 +74,26 @@ class Dashboard extends Component {
         event.preventDefault();
 
         const data = {
-            title: this.state.title,
-            description: this.state.description
+            prompt: this.state.prompt,
+            answer: this.state.answer
         }
 
-        this.props.updateCardset(this.state.selectedId, data);
+        this.props.updateCard(this.props.match.params.setid, this.state.selectedId, data);
     }
 
     showCreate() {
         this.setState({
             createModal: true,
-            title: '',
-            description: ''
+            prompt: '',
+            answer: ''
         });
     }
 
     closeCreate() {
         this.setState({
             createModal: false,
-            title: '',
-            description: '',
+            prompt: '',
+            answer: '',
             errors: {}
         });
     }
@@ -102,20 +102,20 @@ class Dashboard extends Component {
         event.preventDefault();
 
         const data = {
-            title: this.state.title,
-            description: this.state.description
+            prompt: this.state.prompt,
+            answer: this.state.answer
         }
 
-        this.props.createCardset(data);
+        this.props.createCard(this.props.match.params.setid, data);
     }
 
     deleteModal() {
         return (
             <Modal show={this.state.deleteModal} onHide={this.closeDelete}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Delete card set</Modal.Title>
+                    <Modal.Title>Delete card</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>You are about to delete your card set. <br /> Warning: This action is irreversible.</Modal.Body>
+                <Modal.Body>You are about to delete your card. <br /> Warning: This action is irreversible.</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.closeDelete}>
                         Cancel
@@ -132,43 +132,49 @@ class Dashboard extends Component {
         return (
             <Modal show={this.state.updateModal} onHide={this.closeUpdate}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit card set</Modal.Title>
+                    <Modal.Title>Edit card</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>Changes are not saved until the edit button is pressed.</Modal.Body>
                 <Modal.Footer>
                     <Form noValidate className="w-100 p-3 mx-auto" onSubmit={this.acceptUpdate} style={{ maxWidth: "350px", textAlign: "left" }}>
                         <Form.Row>
-                            <Form.Group as={Col} controlId="title">
-                                <Form.Label>Title</Form.Label>
-                                <InputGroup>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Title"
-                                        aria-describedby="inputGroupPrepend"
-                                        required
-                                        onChange={this.handleChange}
-                                        value={this.state.title}
-                                        isInvalid={!!this.state.errors.title}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {this.state.errors.title}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="description">
-                                <Form.Label>Description</Form.Label>
+                            <Form.Group as={Col} controlId="prompt">
+                                <Form.Label>Prompt</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         as="textarea"
                                         rows="3"
                                         type="text"
-                                        placeholder="Description"
+                                        placeholder="Prompt"
+                                        aria-describedby="inputGroupPrepend"
+                                        required
+                                        onChange={this.handleChange}
+                                        value={this.state.prompt}
+                                        isInvalid={!!this.state.errors.prompt}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {this.state.errors.prompt}
+                                    </Form.Control.Feedback>
+                                </InputGroup>
+                            </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="answer">
+                                <Form.Label>Answer</Form.Label>
+                                <InputGroup>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows="3"
+                                        type="text"
+                                        placeholder="Answer"
                                         aria-describedby="inputGroupPrepend"
                                         onChange={this.handleChange}
-                                        value={this.state.description}
+                                        value={this.state.answer}
+                                        isInvalid={!!this.state.errors.answer}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {this.state.errors.answer}
+                                    </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                         </Form.Row>
@@ -190,43 +196,49 @@ class Dashboard extends Component {
         return (
             <Modal show={this.state.createModal} onHide={this.closeCreate}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create new card set</Modal.Title>
+                    <Modal.Title>Create new card</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>You will be able to add cards to this set after creating it.</Modal.Body>
+                <Modal.Body>The card is not saved until the create button is pressed.</Modal.Body>
                 <Modal.Footer>
                     <Form noValidate className="w-100 p-3 mx-auto" onSubmit={this.acceptCreate} style={{ maxWidth: "350px", textAlign: "left" }}>
                         <Form.Row>
-                            <Form.Group as={Col} controlId="title">
-                                <Form.Label>Title</Form.Label>
-                                <InputGroup>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Title"
-                                        aria-describedby="inputGroupPrepend"
-                                        required
-                                        onChange={this.handleChange}
-                                        value={this.state.title}
-                                        isInvalid={!!this.state.errors.title}
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                        {this.state.errors.title}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                        </Form.Row>
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="description">
-                                <Form.Label>Description</Form.Label>
+                            <Form.Group as={Col} controlId="prompt">
+                                <Form.Label>Prompt</Form.Label>
                                 <InputGroup>
                                     <Form.Control
                                         as="textarea"
                                         rows="3"
                                         type="text"
-                                        placeholder="Description"
+                                        placeholder="Prompt"
+                                        aria-describedby="inputGroupPrepend"
+                                        required
+                                        onChange={this.handleChange}
+                                        value={this.state.prompt}
+                                        isInvalid={!!this.state.errors.prompt}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {this.state.errors.prompt}
+                                    </Form.Control.Feedback>
+                                </InputGroup>
+                            </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="answer">
+                                <Form.Label>Answer</Form.Label>
+                                <InputGroup>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows="3"
+                                        type="text"
+                                        placeholder="Answer"
                                         aria-describedby="inputGroupPrepend"
                                         onChange={this.handleChange}
-                                        value={this.state.description}
+                                        value={this.state.answer}
+                                        isInvalid={!!this.state.errors.answer}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {this.state.errors.answer}
+                                    </Form.Control.Feedback>
                                 </InputGroup>
                             </Form.Group>
                         </Form.Row>
@@ -245,7 +257,7 @@ class Dashboard extends Component {
     }
 
     componentDidMount() {
-        this.props.getCardsets();
+        this.props.getCardset(this.props.match.params.setid);
     }
 
     componentWillReceiveProps(next) {
@@ -263,36 +275,35 @@ class Dashboard extends Component {
         return (
             <React.Fragment>
                 <Jumbotron style={{ backgroundColor: "#ffffff" }}>
-                    <h1 className="jumbotron-heading display-4">Hello, {this.props.auth.user.username}</h1>
+                    <h1 className="jumbotron-heading display-4">{this.props.cards.title}</h1>
                     <p className="lead text-muted text-center p-3 mx-auto" style={{ maxWidth: "850px" }}>
-                        Welcome to your dashboard. Here you can view your saved card sets, or edit their properties.
+                        {this.props.cards.description}
                     </p>
-                    <Button variant="primary" size="lg" onClick={this.showCreate}>Create Card Set</Button>
+                    <div style={{ textAlign: "center" }}>
+                        <Button variant="primary" size="lg" className="mx-4" onClick={this.showCreate}>Create Card</Button>
+                        <Button variant="secondary" size="lg" onClick={() => this.props.history.push('/dashboard')}>Dashboard</Button>
+                    </div>
                 </Jumbotron>
-                {(this.props.cardsets.sets.length !== 0) ?
+                {(this.props.cards.cards.length !== 0) ?
                     <div className="album px-5 bg-light row justify-content-md-center">
-                        {this.props.cardsets.sets.map((set) => (
-                            <Card className="col-md-4 m-2" key={set._id} style={{ maxWidth: "20rem" }}>
+                        {this.props.cards.cards.map((card) => (
+                            <Card className="col-md-4 m-2" key={card._id} style={{ maxWidth: "20rem" }}>
                                 <Card.Body>
-                                    <Card.Title>{set.title}</Card.Title>
+                                    <Card.Title>{card.prompt}</Card.Title>
                                     <Card.Text>
-                                        {set.description}
+                                        {card.answer}
                                     </Card.Text>
                                 </Card.Body>
                                 <Card.Footer style={{backgroundColor:"#ffffff"}}>
-                                    <Card.Text className="font-italic text-muted">
-                                        Contains {set.cards.length} cards
-                                    </Card.Text>
                                     <ButtonGroup>
-                                            <Button variant="outline-primary" onClick={() => {this.props.history.push('/dashboard/' + set._id)}}>&nbsp;View&nbsp;</Button>
-                                            <Button variant="outline-secondary" onClick={() => this.showUpdate(set._id, set.title, set.description)}>&nbsp;Edit&nbsp;</Button>
-                                            <Button variant="outline-danger" onClick={() => this.showDelete(set._id)} setid={set._id}>Delete</Button>
+                                            <Button variant="outline-secondary" onClick={() => this.showUpdate(card._id, card.prompt, card.answer)}>&nbsp;Edit&nbsp;</Button>
+                                            <Button variant="outline-danger" onClick={() => this.showDelete(card._id)} setid={card._id}>Delete</Button>
                                     </ButtonGroup>
                                 </Card.Footer>
                             </Card>
                         ))}
                     </div>
-                    : <p className="text-muted my-5 font-italic">You don't seem to have any sets</p>}
+                    : <p className="text-muted my-5 font-italic">You don't seem to have any cards</p>}
                 {this.deleteModal()}
                 {this.updateModal()}
                 {this.createModal()}
@@ -302,19 +313,17 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = state => ({
-    cardsets: state.cardsets,
-    auth: state.auth,
+    cards: state.cards,
     errors: state.validate
 });
 
-Dashboard.propTypes = {
-    getCardsets: PropTypes.func.isRequired,
-    deleteCardset: PropTypes.func.isRequired,
-    createCardset: PropTypes.func.isRequired,
-    updateCardset: PropTypes.func.isRequired,
-    cardsets: PropTypes.object.isRequired,
-    auth: PropTypes.object.isRequired,
+SetDashboard.propTypes = {
+    getCardset: PropTypes.func.isRequired,
+    deleteCard: PropTypes.func.isRequired,
+    createCard: PropTypes.func.isRequired,
+    updateCard: PropTypes.func.isRequired,
+    cards: PropTypes.object.isRequired,
     errors: PropTypes.object.isRequired
 };
 
-export default connect(mapStateToProps, { getCardsets, deleteCardset, createCardset, updateCardset })(withRouter(Dashboard));
+export default connect(mapStateToProps, { getCardset, deleteCard, createCard, updateCard })(withRouter(SetDashboard));
