@@ -78,7 +78,7 @@ class Dashboard extends Component {
             description: this.state.description
         }
 
-        this.props.updateCardset(data, this.state.selectedId);
+        this.props.updateCardset(this.state.selectedId, data);
     }
 
     showCreate() {
@@ -219,6 +219,8 @@ class Dashboard extends Component {
                                 <Form.Label>Description</Form.Label>
                                 <InputGroup>
                                     <Form.Control
+                                        as="textarea"
+                                        rows="3"
                                         type="text"
                                         placeholder="Description"
                                         aria-describedby="inputGroupPrepend"
@@ -262,7 +264,7 @@ class Dashboard extends Component {
             <React.Fragment>
                 <Jumbotron style={{ backgroundColor: "#ffffff" }}>
                     <h1 className="jumbotron-heading display-4">Hello, {this.props.auth.user.username}</h1>
-                    <p className="lead text-muted text-justify p-3 mx-auto" style={{ maxWidth: "850px" }}>
+                    <p className="lead text-muted text-center p-3 mx-auto" style={{ maxWidth: "850px" }}>
                         Welcome to your dashboard. Here you can view your saved card sets, or edit their properties.
                     </p>
                     <Button variant="primary" size="lg" onClick={this.showCreate}>Create Card Set</Button>
@@ -282,7 +284,7 @@ class Dashboard extends Component {
                                         Contains {set.cards.length} cards
                                     </Card.Text>
                                     <ButtonGroup>
-                                            <Button variant="outline-primary">&nbsp;View&nbsp;</Button>
+                                            <Button variant="outline-primary" onClick={() => {this.props.history.push('/dashboard/' + set._id)}}>&nbsp;View&nbsp;</Button>
                                             <Button variant="outline-secondary" onClick={() => this.showUpdate(set._id, set.title, set.description)}>&nbsp;Edit&nbsp;</Button>
                                             <Button variant="outline-danger" onClick={() => this.showDelete(set._id)} setid={set._id}>Delete</Button>
                                     </ButtonGroup>

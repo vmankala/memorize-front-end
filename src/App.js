@@ -12,6 +12,7 @@ import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import PublicNavbar from './components/shared/PublicNavbar';
 import Dashboard from './components/dash/Dashboard';
+import SetDashboard from './components/dash/SetDashboard';
 import PrivateNavbar from './components/shared/PrivateNavbar';
 
 import authenticate from './helpers/authenticate';
@@ -38,8 +39,9 @@ class App extends Component {
           <Route exact path="/" component={Landing} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          <PrivateRoute exact path="/dashboard" component={PrivateNavbar} />
+          <PrivateRoute path="/dashboard" component={PrivateNavbar} />
           <PrivateRoute exact path="/dashboard" component={Dashboard} />
+          <PrivateRoute exact path="/dashboard/:setid" component={SetDashboard}/>
         </Router>
       </Provider>
     );
